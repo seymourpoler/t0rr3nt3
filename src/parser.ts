@@ -14,7 +14,7 @@ export class Parser{
     }
 
     public parse() : TorrentFile {
-        const file = this.fileReader.read(this.configuration.getConfiguration();
+        const file = this.fileReader.read(this.configuration.getConfiguration());
         return new TorrentFile();
     }
 }
