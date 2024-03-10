@@ -1,0 +1,13 @@
+/node_modules
+/_reports
+/reports
+debug.log
+/build/**/*.js
+/dist/*.js
+/build/**/*.js.map
+/test/**/*spec.js
+/test/**/*spec.js.map
+*.torrent
+*.txt
+settings.json
+npm-debug.log
