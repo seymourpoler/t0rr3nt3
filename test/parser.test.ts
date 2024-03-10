@@ -1,5 +1,3 @@
-"use strict"
-
 import { FileReader } from "../src/fileReader";
 import { Parser } from '../src/parser'
 import { mock } from 'vitest-mock-extended';

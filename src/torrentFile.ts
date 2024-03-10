@@ -1,5 +1,3 @@
-"use strict"
-
 export class TorrentFile{
     private  name: string;
     private infoHash: string;

@@ -1,5 +1,3 @@
-"use strict"
-
 import { FileReader} from './fileReader'
 import { TorrentFile } from './torrentFile';
 import { Configuration } from './configuration';
