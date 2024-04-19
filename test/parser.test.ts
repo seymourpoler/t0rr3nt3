@@ -26,5 +26,6 @@ describe('parser', function(){
         expect(torrentFile.getInfoHash()).toBe("");
         expect(torrentFile.getName()).toBe("");
         expect(torrentFile.getLength()).toBe(0);
+        expect(torrentFile.getAnnounce()).toBe("");
     });
 });
