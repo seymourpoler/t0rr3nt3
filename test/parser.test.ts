@@ -25,5 +25,6 @@ describe('parser', function(){
         expect(torrentFile).toBeInstanceOf(TorrentFile);
         expect(torrentFile.getInfoHash()).toBe("");
         expect(torrentFile.getName()).toBe("");
+        expect(torrentFile.getLength()).toBe(0);
     });
 });
