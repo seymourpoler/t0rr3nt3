@@ -15,9 +15,9 @@ describe('parser', function(){
         fileReader = mock<FileReader>();
     });
 
-    it('returns an empty torrent, when file is null', function(){
-        configuration.getConfiguration.mockReturnValue("configuration")
-        fileReader.read.mockReturnValue("");
+    it('returns an empty torrent, when file is empty', function(){
+        // configuration.getConfiguration.mockReturnValue("configuration")
+        // fileReader.read.mockReturnValue("");
         parser = new Parser(configuration, fileReader);
 
         const torrentFile = parser.parse();
