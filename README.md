@@ -3,6 +3,6 @@
 Based on TsTorrent
 
 Resources:
-- https://roadmap.sh/guides/torrent-client
+- https://www.seanjoflynn.com/research/bittorrent.html#bencoding
 - https://wiki.theory.org/BitTorrentSpecification
 - http://bittorrent.org/index.html

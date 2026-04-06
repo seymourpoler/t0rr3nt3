@@ -1,7 +1,7 @@
+import { describe, beforeEach, it, expect } from "vitest";
 import { FileReader } from "../src/fileReader";
 import { Parser } from '../src/parser'
 import { mock } from 'vitest-mock-extended';
-import { describe, beforeEach, it, expect } from "vitest";
 import { TorrentFile } from "../src/torrentFile";
 import { Configuration } from "../src/configuration";
 
@@ -16,8 +16,7 @@ describe('parser', function(){
     });
 
     it('returns an empty torrent, when file is empty', function(){
-        // configuration.getConfiguration.mockReturnValue("configuration")
-        // fileReader.read.mockReturnValue("");
+        (fileReader.read as any).mockReturnValue("");
         parser = new Parser(configuration, fileReader);
 
         const torrentFile = parser.parse();
@@ -29,4 +28,14 @@ describe('parser', function(){
         expect(torrentFile.getPieceLength()).toBe(0);
         expect(torrentFile.getAnnounce()).toBe("");
     });
+
+    it('returns announce', function(){
+        (fileReader.read as any).mockReturnValue("d8:announce13:33:http://192.168.1.74:6969/announcee");
+
+        parser = new Parser(configuration, fileReader);
+
+        const torrentFile = parser.parse();
+
+        expect(torrentFile.getAnnounce()).toBe("http://192.168.1.74:6969/announce");
+    })
 });

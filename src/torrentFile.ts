@@ -6,12 +6,12 @@ export class TorrentFile{
     private pieceLenght : number;
     private announce : string;
 
-    constructor(){
-        this.name = "";
-        this.infoHash = "";
-        this.length = 0;
-        this.pieceLenght = 0;
-        this.announce = "";
+    constructor(args?: { announce?: string; name?: string; infoHash?: string; length?: number; pieceLength?: number }){
+        this.name = args?.name ?? "";
+        this.infoHash = args?.infoHash ?? "";
+        this.length = args?.length ?? 0;
+        this.pieceLenght = args?.pieceLength ?? 0;
+        this.announce = args?.announce ?? "";
     }
 
     public getName(): string{
