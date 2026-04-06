@@ -7,7 +7,12 @@ export class Parser {
 
     public parse() : TorrentFile {
         const fileContent = this.fileReader.read(this.configuration.getConfiguration());
-        if(!fileContent || fileContent.length <= 0 || typeof fileContent !== "string"){
+        if(
+            !fileContent ||
+            fileContent.length <= 0 ||
+            typeof fileContent !== "string" ||
+            !fileContent.startsWith("d")
+        ) {
             return new TorrentFile({ announce: "" });
         }
         let announce = "";
