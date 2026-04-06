@@ -13,11 +13,11 @@ describe('parser', function(){
     beforeEach(function(){
         configuration = mock<Configuration>();
         fileReader = mock<FileReader>();
+        parser = new Parser(configuration, fileReader);
     });
 
     it('returns an empty torrent, when file is empty', function(){
         (fileReader.read as any).mockReturnValue("");
-        parser = new Parser(configuration, fileReader);
 
         const torrentFile = parser.parse();
 
@@ -31,7 +31,6 @@ describe('parser', function(){
 
     it('return empty torrent file, when does not start right', () => {
         (fileReader.read as any).mockReturnValue("8:announce13:33:http://192.168.1.74:6969/announcee");
-        parser = new Parser(configuration, fileReader);
 
         const torrentFile = parser.parse();
 
@@ -45,8 +44,7 @@ describe('parser', function(){
 
     it('returns announce', function(){
         (fileReader.read as any).mockReturnValue("d8:announce13:33:http://192.168.1.74:6969/announcee");
-        parser = new Parser(configuration, fileReader);
-
+        
         const torrentFile = parser.parse();
 
         expect(torrentFile.getAnnounce()).toBe("http://192.168.1.74:6969/announce");
