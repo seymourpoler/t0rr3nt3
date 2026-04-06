@@ -11,7 +11,8 @@ export class Parser {
             !fileContent ||
             fileContent.length <= 0 ||
             typeof fileContent !== "string" ||
-            !fileContent.startsWith("d")
+            !fileContent.startsWith("d") ||
+            !fileContent.endsWith("e")
         ) {
             return new TorrentFile({ announce: "" });
         }

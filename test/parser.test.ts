@@ -42,6 +42,19 @@ describe('parser', function(){
         expect(torrentFile.getAnnounce()).toBe("");
     });
 
+    it('return empty torrent file, when does not end right', () => {
+        (fileReader.read as any).mockReturnValue("d8:announce13:33:http://192.168.1.74:6969/announceh");
+
+        const torrentFile = parser.parse();
+
+        expect(torrentFile).toBeInstanceOf(TorrentFile);
+        expect(torrentFile.getInfoHash()).toBe("");
+        expect(torrentFile.getName()).toBe("");
+        expect(torrentFile.getLength()).toBe(0);
+        expect(torrentFile.getPieceLength()).toBe(0);
+        expect(torrentFile.getAnnounce()).toBe("");
+    });
+
     it('returns announce', function(){
         (fileReader.read as any).mockReturnValue("d8:announce13:33:http://192.168.1.74:6969/announcee");
 
