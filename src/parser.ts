@@ -48,7 +48,7 @@ export class Parser {
     }
 
     private getCommentFrom(content: string): string {
-        const key = 'comment';
+        const key = '7:comment';
         const index = content.indexOf(key);
         if (index === -1) {
             return "";

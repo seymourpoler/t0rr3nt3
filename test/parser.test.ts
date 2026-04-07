@@ -97,6 +97,23 @@ describe('parser', function(){
 
             expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
         });
+
+        it.each`
+            content       
+            ${"d:announce33:http://192.168.1.74:6969/announce3e"}   
+            ${"d8announce33:http://192.168.1.74:6969/announce3e"}
+            ${"d8:aerounce33:http://192.168.1.74:6969/announce3e"}   
+            ${"d8:33:http://192.168.1.74:6969/announce3e"}
+            ${"d8:announce:http://192.168.1.74:6969/announce3e"}   
+            ${"d8:announce33http://192.168.1.74:6969/announce3e"}   
+            ${"d8:announce33:e"}   
+          `("returns empty when comment '$password' is wrong", (content: string) => {
+            (fileReader.read as any).mockReturnValue(content);
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.comment).toBe("");
+        });
     });
 
     describe('when parse comment', () =>{
@@ -107,8 +124,24 @@ describe('parser', function(){
 
             expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
             expect(torrentFile.comment).toBe("Comment goes here");
-        })
-    })
+        });
+
+        it.each`
+            content       
+            ${"d8:announce33:http://192.168.1.74:6969/announce3:comment17:Comment goes heree"}   
+            ${"d8:announce33:http://192.168.1.74:6969/announce:comment17:Comment goes heree"}  
+            ${"d8:announce33:http://192.168.1.74:6969/announce7:commen17:Comment goes heree"}  
+            ${"d8:announce33:http://192.168.1.74:6969/announce7:17:Comment goes heree"} 
+            ${"d8:announce33:http://192.168.1.74:6969/announce7comment17:Comment goes heree"} 
+            ${"d8:announce33:http://192.168.1.74:6969/announce7:comment17Comment goes heree"}
+          `("returns empty when comment '$password' is wrong", (content: string) => {
+                (fileReader.read as any).mockReturnValue(content);
+
+                const torrentFile = parser.parse();
+
+                expect(torrentFile.comment).toBe("");
+        });
+    });
 
     describe('when parse created by', () => {
         it('returns created by', () => {
