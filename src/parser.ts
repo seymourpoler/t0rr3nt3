@@ -74,7 +74,7 @@ export class Parser {
     }
 
     private getCreatedByFrom(content: string): string {
-        const key = 'created by';
+        const key = '10:created by';
         const position = content.indexOf(key);
         if (position === -1) {
              return "";

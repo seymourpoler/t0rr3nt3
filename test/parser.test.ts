@@ -153,5 +153,22 @@ describe('parser', function(){
             expect(torrentFile.comment).toBe("Comment goes here");
             expect(torrentFile.createdBy).toBe("Transmission/2.92 (14714)");
         })
+
+        it.each`
+            content        
+            ${"d7:comment17:Comment:created by25:Transmission/2.92 (14714)e"} 
+            ${"d7:comment17:Comment10created by25:Transmission/2.92 (14714)e"}
+            ${"d7:comment17:Comment10:cre by25:Transmission/2.92 (14714)e"}
+            ${"d7:comment17:Comment10:25:Transmission/2.92 (14714)e"}
+            ${"d7:comment17:Comment10:created by:Transmission/2.92 (14714)e"}   
+            ${"d7:comment17:Comment10:created by25Transmission/2.92 (14714)e"}    
+            ${"d7:comment17:Comment10:created by25:e"}
+          `("returns empty when comment '$password' is wrong", (content: string) => {
+            (fileReader.read as any).mockReturnValue(content);
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.comment).toBe("");
+        });
     })
 });
