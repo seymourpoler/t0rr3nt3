@@ -6,14 +6,16 @@ export class TorrentFile {
     private pieceLenght : number;
     public readonly announce : string;
     public readonly comment : string;
+    public readonly createdBy : string;
 
-    constructor(args?: { announce?: string; name?: string; infoHash?: string; length?: number; pieceLength?: number; comment?: string }){
+    constructor(args?: { announce?: string; name?: string; infoHash?: string; length?: number; pieceLength?: number; comment?: string, createdBy?: string }) {
         this.name = args?.name ?? "";
         this.infoHash = args?.infoHash ?? "";
         this.length = args?.length ?? 0;
         this.pieceLenght = args?.pieceLength ?? 0;
         this.announce = args?.announce ?? "";
         this.comment = args?.comment ?? "";
+        this.createdBy = args?.createdBy ?? "";
     }
 
     public getName(): string{

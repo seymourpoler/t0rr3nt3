@@ -16,7 +16,8 @@ export class Parser {
         }
         return new TorrentFile({
             announce: this.getAnnounceFrom(content),
-            comment: this.getCommentFrom(content)
+            comment: this.getCommentFrom(content),
+            createdBy: this.getCreatedByFrom(content)
         });
     }
 
@@ -54,6 +55,32 @@ export class Parser {
         }
         let start = index + key.length;
         let end = index + key.length;
+        while (content[end] && /[0-9]/.test(content[end])) {
+            end++;
+        }
+        if (start === end) {
+            return "";
+        }
+        const positionOfColon = content.indexOf(':', end);
+        if (positionOfColon === -1) {
+            return "";
+        }
+        const valueLength = parseInt(content.substring(start, end), 10);
+        if (isNaN(valueLength)) {
+            return "";
+        }
+        const positionOfStartValue = positionOfColon + 1;
+        return content.substring(positionOfStartValue, positionOfStartValue + valueLength);
+    }
+
+    private getCreatedByFrom(content: string): string {
+        const key = 'created by';
+        const position = content.indexOf(key);
+        if (position === -1) {
+             return "";
+        }
+        let start = position + key.length;
+        let end = start;
         while (content[end] && /[0-9]/.test(content[end])) {
             end++;
         }

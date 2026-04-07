@@ -55,20 +55,36 @@ describe('parser', function(){
         expect(torrentFile.announce).toBe("");
     });
 
-    it('returns announce', function(){
-        (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announcee");
+    describe('when parse announce', () =>{
+        it('returns announce', function(){
+            (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announcee");
 
-        const torrentFile = parser.parse();
+            const torrentFile = parser.parse();
 
-        expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
+            expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
+        })
     })
 
-    it('returns comment', function(){
-        (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes heree");
+    describe('when parse comment', () =>{
+        it('returns comment', function(){
+            (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes heree");
 
-        const torrentFile = parser.parse();
+            const torrentFile = parser.parse();
 
-        expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
-        expect(torrentFile.comment).toBe("Comment goes here");
+            expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
+            expect(torrentFile.comment).toBe("Comment goes here");
+        })
+    })
+
+    describe('when parse created by', () => {
+        it('returns created by', () => {
+            (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes here10:created by25:Transmission/2.92 (14714)e");
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
+            expect(torrentFile.comment).toBe("Comment goes here");
+            expect(torrentFile.createdBy).toBe("Transmission/2.92 (14714)");
+        })
     })
 });
