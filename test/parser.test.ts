@@ -171,4 +171,34 @@ describe('parser', function(){
             expect(torrentFile.comment).toBe("");
         });
     })
+
+    describe('when parse creation date', () => {
+        it('returns creation date', () => {
+            (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes here10:created by25:Transmission/2.92 (14714)13:creation datei1460444420ee");
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
+            expect(torrentFile.comment).toBe("Comment goes here");
+            expect(torrentFile.createdBy).toBe("Transmission/2.92 (14714)");
+            expect(torrentFile.creationDate).toBe(1460444420);
+        })
+
+        it.each`
+            content        
+            ${"d25:Transmission/2.92 (14714):creation datei1460444420ee"} 
+            ${"d25:Transmission/2.92 (14714)13creation datei1460444420ee"}
+            ${"d25:Transmission/2.92 (14714)13:crea datei1460444420ee"}
+            ${"d25:Transmission/2.92 (14714)13:i1460444420ee"}
+            ${"d25:Transmission/2.92 (14714)13:creation date1460444420ee"}   
+            ${"d25:Transmission/2.92 (14714)13:creation datei1460444420ge"}    
+            ${"d25:Transmission/2.92 (14714)13:creation datei1460444420e"}
+          `("returns empty when comment '$password' is wrong", (content: string) => {
+            (fileReader.read as any).mockReturnValue(content);
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.createdBy).toBe("");
+        });
+    })
 });

@@ -1,5 +1,5 @@
 # test
-Ejecuta la suite completa de tests con informe de cobertura.
-Muestra los tests que fallan y sugiere correcciones.
+Ejecuta la suite completa de tests.
+Muestra los tests que fallan.
 
 !`npm run test`
