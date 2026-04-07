@@ -1,7 +1,7 @@
 {
   "name": "t0rr3nt3",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "a very simple torrent parser written in TypeScript",
   "main": "program.ts",
   "keywords": [
     ".torrent",
