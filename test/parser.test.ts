@@ -56,10 +56,19 @@ describe('parser', function(){
     });
 
     it('returns announce', function(){
-        (fileReader.read as any).mockReturnValue("d8:announce13:33:http://192.168.1.74:6969/announcee");
+        (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announcee");
 
         const torrentFile = parser.parse();
 
         expect(torrentFile.getAnnounce()).toBe("http://192.168.1.74:6969/announce");
+    })
+
+    it('returns comment', function(){
+        (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes heree");
+
+        const torrentFile = parser.parse();
+
+        expect(torrentFile.getAnnounce()).toBe("http://192.168.1.74:6969/announce");
+        expect(torrentFile.comment).toBe("Comment goes here");
     })
 });
