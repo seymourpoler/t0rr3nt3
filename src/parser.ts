@@ -14,22 +14,21 @@ export class Parser {
             !fileContent.endsWith("e")) {
             return new TorrentFile({ announce: "" });
         }
-        let announce = "";
         const position = fileContent.indexOf('announce');
         if(position === -1){
             return new TorrentFile({ announce: "" });
         }
-        const s = fileContent.substring(position);
-        const firstColon = s.indexOf(':');
-        const secondColon = s.indexOf(':', firstColon + 1);
+        const announce = fileContent.substring(position);
+        const firstColon = announce.indexOf(':');
+        const secondColon = announce.indexOf(':', firstColon + 1);
         if (secondColon === -1) {
             return new TorrentFile({ announce: "" });
         }
-        let announceValue = s.substring(secondColon + 1);
+        let announceValue = announce.substring(secondColon + 1);
         if (announceValue.endsWith('e')) {
             announceValue = announceValue.slice(0, -1);
-            announce = announceValue;
+            return new TorrentFile({ announce: announceValue });
         }
-        return new TorrentFile({ announce: announce });
+        return new TorrentFile({ announce: "" });
     }
 }
