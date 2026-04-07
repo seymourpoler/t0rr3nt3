@@ -17,7 +17,8 @@ export class Parser {
         return new TorrentFile({
             announce: this.getAnnounceFrom(content),
             comment: this.getCommentFrom(content),
-            createdBy: this.getCreatedByFrom(content)
+            createdBy: this.getCreatedByFrom(content),
+            creationDate: this.getCreationDateFrom(content)
         });
     }
 
@@ -97,5 +98,9 @@ export class Parser {
         }
         const positionOfStartValue = positionOfColon + 1;
         return content.substring(positionOfStartValue, positionOfStartValue + valueLength);
+    }
+
+    private getCreationDateFrom(content: string) : number {
+        throw new Error("Not implemented yet");
     }
 }
