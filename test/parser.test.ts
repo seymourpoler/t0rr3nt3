@@ -1,9 +1,9 @@
 import { describe, beforeEach, it, expect } from "vitest";
 import { FileReader } from "../src/fileReader";
 import { Parser } from '../src/parser'
-import { mock } from 'vitest-mock-extended';
 import { TorrentFile } from "../src/torrentFile";
 import { Configuration } from "../src/configuration";
+import { spyAllMethodsOf } from "./testing";
 
 describe('parser', function(){
     let fileReader : FileReader;
@@ -11,8 +11,10 @@ describe('parser', function(){
     let configuration: Configuration;
 
     beforeEach(function(){
-        configuration = mock<Configuration>();
-        fileReader = mock<FileReader>();
+        configuration = new Configuration();
+        spyAllMethodsOf(configuration);
+        fileReader = new FileReader();
+        spyAllMethodsOf(fileReader);
         parser = new Parser(configuration, fileReader);
     });
 
@@ -56,14 +58,46 @@ describe('parser', function(){
     });
 
     describe('when parse announce', () =>{
+        it('returns empty for missing announce', function(){
+            (fileReader.read as any).mockReturnValue("dd4:name5:file1ee");
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.announce).toBe("");
+        });
+
+        it('returns empty for missing announce', function(){
+            (fileReader.read as any).mockReturnValue("dd4:name5:file1ee");
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.announce).toBe("");
+        });
+
+        it('returns empty when there is no the first colon', function(){
+            (fileReader.read as any).mockReturnValue("d8announce33:http://192.168.1.74:6969/announcee");
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.announce).toBe("");
+        });
+
+        it('returns empty when there is no the last colon', function(){
+            (fileReader.read as any).mockReturnValue("d8announce33http://192.168.1.74:6969/announcee");
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.announce).toBe("");
+        });
+
         it('returns announce', function(){
             (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announcee");
 
             const torrentFile = parser.parse();
 
             expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
-        })
-    })
+        });
+    });
 
     describe('when parse comment', () =>{
         it('returns comment', function(){

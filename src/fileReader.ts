@@ -1,3 +1,5 @@
-export interface FileReader{
-    read(path: string) : string;
+export class FileReader{
+    public read(path: string) : string {
+        throw new Error("Not implemented");
+    }
 }

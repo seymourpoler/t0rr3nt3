@@ -22,7 +22,7 @@ export class Parser {
     }
 
     private getAnnounceFrom(content: string): string {
-        const key = 'announce';
+        const key = '8:announce';
         const position = content.indexOf(key);
         if(position === -1) {
             return "";
