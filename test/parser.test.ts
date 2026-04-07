@@ -183,5 +183,22 @@ describe('parser', function(){
             expect(torrentFile.createdBy).toBe("Transmission/2.92 (14714)");
             expect(torrentFile.creationDate).toBe(1460444420);
         })
+
+        it.each`
+            content        
+            ${"d25:Transmission/2.92 (14714):creation datei1460444420ee"} 
+            ${"d25:Transmission/2.92 (14714)13creation datei1460444420ee"}
+            ${"d25:Transmission/2.92 (14714)13:crea datei1460444420ee"}
+            ${"d25:Transmission/2.92 (14714)13:i1460444420ee"}
+            ${"d25:Transmission/2.92 (14714)13:creation date1460444420ee"}   
+            ${"d25:Transmission/2.92 (14714)13:creation datei1460444420ge"}    
+            ${"d25:Transmission/2.92 (14714)13:creation datei1460444420e"}
+          `("returns empty when comment '$password' is wrong", (content: string) => {
+            (fileReader.read as any).mockReturnValue(content);
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.createdBy).toBe("");
+        });
     })
 });
