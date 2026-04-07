@@ -1,37 +1,45 @@
 # AGENTS.md
 
-## Overview
+## Fast Facts & Agent Guidance
 
-This project implements a BitTorrent `.torrent` file parser and a set of utilities for reading and interpreting torrent metadata. The agent under test ensures robust and fail-safe parsing for common and edge-case .torrent file structures, including detection and rejection of malformed or malicious files.
-
-## Responsibilities
-
-- Read `.torrent` files using flexible file reader abstraction.
-- Parse top-level keys such as `announce`, `info`, `name`, `length`, and `piece length` according to the BitTorrent specification (BEP-0003).
-- Detect malformed torrent files (e.g., missing or incorrectly encoded required top-level dictionary) and safely return an "empty" torrent file object.
-- Expose a type-safe interface (`TorrentFile`) for consuming torrent metadata.
-
-## Usage
-
-- Main entry point: Instantiate a `Parser` with appropriate configuration and a `FileReader` implementation.
-- Call `Parser.parse()` to parse the torrent file and retrieve a `TorrentFile`.
-- The parser will return a default, empty `TorrentFile` if the file is missing, empty, or malformed (does not start with the expected dictionary marker).
-
-## Testing
-
-- Tests cover successful parsing, empty files, and files with parsing errors.
-- All tests can be run via the command:
-  ```sh
-  npm run test
-  ```
-
-## File List
-
-- `src/parser.ts`: Torrent metadata parser
-- `src/torrentFile.ts`: In-memory torrent metadata representation
-- `src/fileReader.ts`: File reading abstraction
-- `src/configuration.ts`: Runtime configuration
+**Purpose:** Robust, fault-tolerant BitTorrent `.torrent` file parser (TypeScript, no monorepo)
 
 ---
 
-This file documents the agent’s purpose and main behaviors for collaboration and maintenance.
+## Repo Structure
+- All implementation is in `src/`, single-package TypeScript
+- Entry via `Parser`, `TorrentFile`, `FileReader`; no CLI, no HTTP server
+- No codegen, no migrations, no special assets
+
+## How to Test
+- Unit tests only (no integration tests, not flaky/slow)
+- Test runner: **vitest** (`npm run test`, `npm run test:watch`)
+- Adding/removing test files: place in `/test`, extension `.test.ts`
+- Tests do not require services, fixtures, or network
+
+## How to Build & Lint
+- Typecheck & build: `npm run build` (runs `tsc`)
+- Lint: `npm run lint` (runs eslint on `src/`)
+- No special order required, but prefer: lint → build → test
+
+## Extending
+- Add new file format support, parser logic, or error detection in `src/`
+- For parsing changes, **edit `parser.ts` and update/create matching tests**
+
+## Testing Quirks
+- Tests use `vitest` syntax (`describe`, `it`, `expect`), not jest or mocha
+- Some tests use `vitest-mock-extended` for dependency mocks
+- No test setup scripts, postinstall scripts, or external prerequisites
+
+## References
+- For BitTorrent spec edge cases, see links in `README.md`
+
+---
+
+## When You Might Trip Up
+- Test runner is `vitest` (not jest or mocha); use `npm run test`
+- Project is intentionally simple—**don’t add complexity or extra config unless required by the problem**
+- No `.env`, build system, or toolchain subtleties
+
+---
+
