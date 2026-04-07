@@ -26,7 +26,7 @@ describe('parser', function(){
         expect(torrentFile.getName()).toBe("");
         expect(torrentFile.getLength()).toBe(0);
         expect(torrentFile.getPieceLength()).toBe(0);
-        expect(torrentFile.getAnnounce()).toBe("");
+        expect(torrentFile.announce).toBe("");
     });
 
     it('return empty torrent file, when does not start right', () => {
@@ -39,7 +39,7 @@ describe('parser', function(){
         expect(torrentFile.getName()).toBe("");
         expect(torrentFile.getLength()).toBe(0);
         expect(torrentFile.getPieceLength()).toBe(0);
-        expect(torrentFile.getAnnounce()).toBe("");
+        expect(torrentFile.announce).toBe("");
     });
 
     it('return empty torrent file, when does not end right', () => {
@@ -52,7 +52,7 @@ describe('parser', function(){
         expect(torrentFile.getName()).toBe("");
         expect(torrentFile.getLength()).toBe(0);
         expect(torrentFile.getPieceLength()).toBe(0);
-        expect(torrentFile.getAnnounce()).toBe("");
+        expect(torrentFile.announce).toBe("");
     });
 
     it('returns announce', function(){
@@ -60,7 +60,7 @@ describe('parser', function(){
 
         const torrentFile = parser.parse();
 
-        expect(torrentFile.getAnnounce()).toBe("http://192.168.1.74:6969/announce");
+        expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
     })
 
     it('returns comment', function(){
@@ -68,7 +68,7 @@ describe('parser', function(){
 
         const torrentFile = parser.parse();
 
-        expect(torrentFile.getAnnounce()).toBe("http://192.168.1.74:6969/announce");
+        expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
         expect(torrentFile.comment).toBe("Comment goes here");
     })
 });

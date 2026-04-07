@@ -4,7 +4,7 @@ export class TorrentFile {
     private infoHash: string;
     private length : number;
     private pieceLenght : number;
-    private announce : string;
+    public readonly announce : string;
     public readonly comment : string;
 
     constructor(args?: { announce?: string; name?: string; infoHash?: string; length?: number; pieceLength?: number; comment?: string }){
@@ -30,9 +30,5 @@ export class TorrentFile {
 
     public getPieceLength(): number {
         return this.pieceLenght;
-    }
-
-    public getAnnounce(): any {
-        return this.announce;
     }
 }
