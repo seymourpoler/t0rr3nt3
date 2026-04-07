@@ -6,3 +6,4 @@ Resources:
 - https://www.seanjoflynn.com/research/bittorrent.html#bencoding
 - https://wiki.theory.org/BitTorrentSpecification
 - http://bittorrent.org/index.html
+- https://www.bittorrent.org/beps/bep_0003.html)
