@@ -201,4 +201,36 @@ describe('parser', function(){
             expect(torrentFile.createdBy).toBe("");
         });
     })
+
+    describe('when parse encoding', () =>{
+        it('returns encoding', () => {
+            (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes here10:created by25:Transmission/2.92 (14714)13:creation datei1460444420e8:encoding5:UTF-8e");
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
+            expect(torrentFile.comment).toBe("Comment goes here");
+            expect(torrentFile.createdBy).toBe("Transmission/2.92 (14714)");
+            expect(torrentFile.creationDate).toBe(1460444420);
+            expect(torrentFile.encoding).toBe("UTF-8");
+        });
+
+        it.each`
+            content
+            ${"d8:announce33:http://a/announce8encoding5:UTF-8e"}
+            ${"d8:announce33:http://a/announce8:encoding5UTF-8e"}
+            ${"d8:announce33:http://a/announce8:encoding:UTF-8e"}
+            ${"d8:announce33:http://a/announce8:encodinge"}
+            ${"d8:announce33:http://a/announceencoding5:UTF-8e"}
+            ${"d8:encodinge"}
+            ${"d8:encoding0:e"}
+            ${"d8:encoding5:e"}
+            `("returns empty when encoding field is malformed or missing", ( content: string) => {
+                (fileReader.read as any).mockReturnValue(content);
+
+                const torrentFile = parser.parse();
+
+                expect(torrentFile.encoding).toBe("");
+        });
+    });
 });

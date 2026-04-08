@@ -14,11 +14,12 @@ export class Parser {
             !content.endsWith("e")) {
             return new TorrentFile({ announce: "" });
         }
-        return new TorrentFile({
+         return new TorrentFile({
             announce: this.getAnnounceFrom(content),
             comment: this.getCommentFrom(content),
             createdBy: this.getCreatedByFrom(content),
-            creationDate: this.getCreationDateFrom(content)
+            creationDate: this.getCreationDateFrom(content),
+            encoding: this.getEncodingFrom(content)
         });
     }
 
@@ -137,5 +138,36 @@ export class Parser {
             return 0;
         }
         return creationDate;
+    }
+
+    private getEncodingFrom(content: string): string {
+        const key = '8:encoding';
+        const index = content.indexOf(key);
+        if (index === -1) {
+            return "";
+        }
+
+        let start = index + key.length;
+        let end = index + key.length;
+        while (content[end] && /[0-9]/.test(content[end])) {
+            end++;
+        }
+        if (start === end) {
+            return "";
+        }
+        if (content[end] !== ':') {
+            return "";
+        }
+
+        const valueLength = parseInt(content.substring(start, end), 10);
+        if (isNaN(valueLength)) {
+            return "";
+        }
+
+        const positionOfStartValue = end + 1;
+        if (positionOfStartValue + valueLength > content.length) {
+            return "";
+        }
+        return content.substring(positionOfStartValue, positionOfStartValue + valueLength);
     }
 }
