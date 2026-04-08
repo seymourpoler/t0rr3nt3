@@ -19,7 +19,8 @@ export class TorrentFile {
         info?: {
             length?: number,
             name?: string,
-            pieceLength?: number
+            pieceLength?: number,
+            private?: boolean,
         }
     }) {
         this.announce = args?.announce ?? "";
@@ -30,7 +31,8 @@ export class TorrentFile {
         this.info = new TorrentFileInformation({
           length: args?.info?.length ?? 0,
           name: args?.info?.name ?? "",
-          pieceLength: args?.info?.pieceLength ?? 0
+          pieceLength: args?.info?.pieceLength ?? 0,
+          private: args?.info?.private ?? false
         });
     }
 }
@@ -39,10 +41,12 @@ export class TorrentFileInformation {
     public readonly length: number;
     public readonly name: string;
     public readonly pieceLength : number;
+    public readonly private: boolean;
 
-    constructor(args:{length:number, name: string, pieceLength:number}) {
+    constructor(args:{length:number, name: string, pieceLength:number, private: boolean}) {
         this.length = args?.length ?? 0;
         this.name = args?.name ?? "";
         this.pieceLength = args?.pieceLength ?? 0;
+        this.private = args?.private ?? false;
     }
 }

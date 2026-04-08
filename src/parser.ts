@@ -176,13 +176,14 @@ export class Parser {
         const info = '4:info';
         const start = content.indexOf(info);
         if (start === -1) {
-            return new TorrentFileInformation({ length: 0, name: "", pieceLength: 0 });
+            return new TorrentFileInformation({ length: 0, name: "", pieceLength: 0, private: false });
         }
 
         return new TorrentFileInformation({
             length: this.getInfoLengthFrom(content),
             name: this.getInfoNameFrom(content),
-            pieceLength: this.getInfoPieceLengthFrom(content)
+            pieceLength: this.getInfoPieceLengthFrom(content),
+            private: this.getInfoPrivateFrom(content)
         });
     }
 
@@ -221,5 +222,13 @@ export class Parser {
             return 0;
         }
         return parseInt(match[1], 10);
+    }
+
+    private getInfoPrivateFrom(content: string): boolean {
+        const match = content.match(/7:privatei([01])e/);
+        if (!match) {
+            return false;
+        }
+        return match[1] === '1';
     }
 }
