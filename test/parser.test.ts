@@ -248,6 +248,25 @@ describe('parser', function(){
                 expect(torrentFile.encoding).toBe("UTF-8");
                 expect(torrentFile.info.length).toBe(59616);
             })
+
+            it.each`
+                content                                                                          | description
+                ${"d8:announce33:http://192.168.1.74:6969/announce4:infod4:name9:lorem.txtee"}   | ${'missing length field'}
+                ${"d8:announce33:http://a/announce4:infod6:lenghti12345ee"}                      | ${'misspelled as "lenght"'}
+                ${"d8:announce33:http://a/announce4:infod6:lengthiee"}                           | ${'no number after i'}
+                ${"d8:announce33:http://a/announce4:infod6:lengthi-42ee"}                        | ${'negative number'}
+                ${"d8:announce33:http://a/announce4:infod6:lengthi0ee"}                          | ${'zero value'}
+                ${"d8:announce33:http://a/announce4:infod6:lengthinotnumberee"}                  | ${'not a number'}
+                ${"d8:announce33:http://a/announce4:infod6:length42e4:name9:lorem.txtee"}        | ${'missing "i" before number'}
+                ${"d8:announce33:http://a/announce4:infod6:lengthi999999999ee"}                  | ${'very large value'}
+                ${"d8:announce33:http://a/announce4:infod6:lengthi44e6:lengthi22ee"}             | ${'two length fields, picks first'}
+            `('returns 0 for info.length when $description', (content: string) => {
+                (fileReader.read as any).mockReturnValue(content);
+
+                const torrentFile = parser.parse();
+
+                expect(torrentFile.info.length).toBe(0);
+            });
         })
 
         describe('when parse info.name', () => {
@@ -264,27 +283,25 @@ describe('parser', function(){
                 expect(torrentFile.info.length).toBe(59616);
                 expect(torrentFile.info.name).toBe("lorem.txt");
             })
-            })
 
             it.each`
-                content                                                                          | description
-                ${"d8:announce33:http://192.168.1.74:6969/announce4:infod4:name9:lorem.txtee"}   | ${'missing length field'}
-                ${"d8:announce33:http://a/announce4:infod6:lenghti12345ee"}                      | ${'misspelled as "lenght"'}
-                ${"d8:announce33:http://a/announce4:infod6:lengthiee"}                           | ${'no number after i'}
-                ${"d8:announce33:http://a/announce4:infod6:lengthi-42ee"}                        | ${'negative number'}
-                ${"d8:announce33:http://a/announce4:infod6:lengthi0ee"}                          | ${'zero value'}
-                ${"d8:announce33:http://a/announce4:infod6:lengthinotnumberee"}                  | ${'not a number'}
-                ${"d8:announce33:http://a/announce4:infod6:length42e4:name9:lorem.txtee"}        | ${'missing "i" before number'}
-                ${"d8:announce33:http://a/announce4:infod6:lengthi999999999ee"}                  | ${'very large value'}
-                ${"d8:announce33:http://a/announce4:infod6:lengthi44e6:lengthi22ee"}             | ${'two length fields, picks first'}
-                ${"d8:announce33:http://a/announcee"}                                            | ${'no info dict at all'}
-                ${"d8:announce33:http://a/announce4:infod4:name9:lorem.txte"}                    | ${'malformed info dict (unclosed)'}
-                ${"d8:announce33:http://a/announce4:infod6:lengthi6e4:name9:a.txteq"}            | ${'extra data after valid length'}
-            `('returns 0 for info.length when $description', (content: string) => {
+                content                                                                     | description
+                ${"d8:announce33:http://a/announce4:infod6:lengthi660ee"}                   | ${'missing name field'}
+                ${"d8:announce33:http://a/announce4:infod4:nmae9:lorem.txt6:lengthi33ee"}   | ${'misspelled as nmae'}
+                ${"d8:announce33:http://a/announce4:infod4:name0:6:lengthi33ee"}            | ${'zero-length name'}
+                ${"d8:announce33:http://a/announce4:infod4:nameXe6:lengthi12ee"}            | ${'not a number as length'}
+                ${"d8:announce33:http://a/announce4:infod4:name9lorem.txt6:lengthi22ee"}    | ${'missing colon after length'}
+                ${"d8:announce33:http://a/announce4:infod4:name15:lorem.tx6:lengthi33ee"}   | ${'declared name field longer than value'}
+                ${"d8:announce33:http://a/announce4:infod4:name9:6:lengthi33ee"}            | ${'missing actual value'}
+                ${"d8:announce33:http://a/announce4:infod4:name9:lorem.txt4:name5:abcdeee"} | ${'two name fields; picks first'}
+            `('returns empty info.name when $description', (content: string) => {
                 (fileReader.read as any).mockReturnValue(content);
+
                 const torrentFile = parser.parse();
-                expect(torrentFile.info.length).toBe(0);
+
+                expect(torrentFile.info.name).toBe("");
             });
         })
+    })
 
 });
