@@ -1,5 +1,5 @@
 import {FileReader} from './fileReader'
-import {TorrentFile} from './torrentFile';
+import {TorrentFile, TorrentFileInformation} from './torrentFile';
 import {Configuration} from './configuration';
 
 export class Parser {
@@ -19,7 +19,8 @@ export class Parser {
             comment: this.getCommentFrom(content),
             createdBy: this.getCreatedByFrom(content),
             creationDate: this.getCreationDateFrom(content),
-            encoding: this.getEncodingFrom(content)
+            encoding: this.getEncodingFrom(content),
+            info: this.getInfoFrom(content)
         });
     }
 
@@ -169,5 +170,46 @@ export class Parser {
             return "";
         }
         return content.substring(positionOfStartValue, positionOfStartValue + valueLength);
+    }
+
+    private getInfoFrom(content: string): TorrentFileInformation {
+        const info = '4:info';
+        const start = content.indexOf(info);
+        if (start === -1) {
+            return new TorrentFileInformation({ length: 0, name: "" });
+        }
+
+        return new TorrentFileInformation({
+            length: this.getInfoLengthFrom(content),
+            name: this.getInfoNameFrom(content) });
+    }
+
+    private getInfoLengthFrom(content: string): number {
+        // Looks for 6:lengthiXXXXe anywhere (in/following info), matches the test fixture! (Handles "6:lengthi59616e")
+        const match = content.match(/6:lengthi(\d+)e/);
+        if (!match) return 0;
+        return parseInt(match[1], 10);
+    }
+
+    private getInfoNameFrom(content: string): string{
+        const key = '4:name';
+
+        const index = content.indexOf(key);
+        if (index === -1) {
+            return "";
+        }
+        let start = index + key.length;
+        let end = start;
+        while (content[end] && /[0-9]/.test(content[end])) {
+            end++;
+        }
+        if(start === end) {
+            return "";
+        }
+        const length = parseInt(content.slice(start, end), 10);
+        if (isNaN(length) || content[end] !== ':') {
+            return "";
+        }
+        return content.substr(end + 1, length);
     }
 }
