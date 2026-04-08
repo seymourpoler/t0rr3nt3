@@ -1,9 +1,4 @@
 export class TorrentFile {
-    
-    private name: string;
-    private infoHash: string;
-    private length : number;
-    private pieceLenght : number;
     public readonly announce : string;
     public readonly comment : string;
     public readonly createdBy : string;
@@ -21,43 +16,33 @@ export class TorrentFile {
         createdBy?: string,
         creationDate?: number,
         encoding?: string,
-        info?: TorrentFileInformation}) {
-
-        this.name = args?.name ?? "";
-        this.infoHash = args?.infoHash ?? "";
-        this.length = args?.length ?? 0;
-        this.pieceLenght = args?.pieceLength ?? 0;
+        info?: {
+            length?: number,
+            name?: string,
+            pieceLength?: number
+        }
+    }) {
         this.announce = args?.announce ?? "";
         this.comment = args?.comment ?? "";
         this.createdBy = args?.createdBy ?? "";
         this.creationDate = args?.creationDate ?? 0;
         this.encoding = args?.encoding ?? "";
-        this.info = args?.info ?? new TorrentFileInformation({length:0, name: ""});
-    }
-
-    public getName(): string{
-        return this.name;
-    }
-
-    public getInfoHash(): string{
-        return this.infoHash;
-    }
-
-    public getLength(): number{
-        return this.length;
-    }
-
-    public getPieceLength(): number {
-        return this.pieceLenght;
+        this.info = new TorrentFileInformation({
+          length: args?.info?.length ?? 0,
+          name: args?.info?.name ?? "",
+          pieceLength: args?.info?.pieceLength ?? 0
+        });
     }
 }
 
 export class TorrentFileInformation {
     public readonly length: number;
     public readonly name: string;
+    public readonly pieceLength : number;
 
-    constructor(args:{length:number, name: string}){
+    constructor(args:{length:number, name: string, pieceLength:number}) {
         this.length = args?.length ?? 0;
         this.name = args?.name ?? "";
+        this.pieceLength = args?.pieceLength ?? 0;
     }
 }
