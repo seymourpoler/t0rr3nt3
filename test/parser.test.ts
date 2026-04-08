@@ -187,20 +187,29 @@ describe('parser', function(){
         })
 
         describe('when parse info.private', () => {
-            it('returns info.private', () => {
-                (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes here10:created by25:Transmission/2.92 (14714)13:creation datei1460444420e8:encoding5:UTF-84:infod6:lengthi59616e4:name9:lorem.txt12:piece lengthi32768e7:privatei0eee");
-
+            it.each`
+                content                                                                                                                                            | description
+                ${"d8:announce33:http://192.168.1.74:6969/announce4:infod7:privatei1eeee"}                                                                        | ${'private present, set to 1'}
+                ${"d8:announce33:http://192.168.1.74:6969/announce4:infod7:privatei0eeee"}                                                                        | ${'private present, set to 0'}
+                ${"d8:announce33:http://192.168.1.74:6969/announce4:infod6:lengthi1337e4:name4:testee"}                                                         | ${'no private field (absent)'}
+                ${"d8:announce33:http://192.168.1.74:6969/announce4:infod7:privatei9eeee"}                                                                        | ${'private present, invalid value 9'}
+                ${"d8:announce33:http://192.168.1.74:6969/announce4:infod7:privateieee"}                                                                         | ${'private present, but missing value'}
+                ${"d8:announce33:http://example.com4:infod7:privatei1e7:privatei0eee"}                                                                            | ${'two private fields, picks first'}
+                ${"d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment10:created by18:Transmission13:creation datei1460444420e8:encoding5:UTF-84:infod6:lengthi59616e4:name9:lorem.txt12:piece lengthi32768e7:privatei0eee"} | ${'realistic full input, private 0'}
+                ${"d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment10:created by18:Transmission13:creation datei1460444420e8:encoding5:UTF-84:infod6:lengthi59616e4:name9:lorem.txt12:piece lengthi32768e7:privatei1eee"} | ${'realistic full input, private 1'}
+            `('parses info.private edge (${description})', ({ content, description }) => {
+                (fileReader.read as any).mockReturnValue(content);
                 const torrentFile = parser.parse();
-
-                expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
-                expect(torrentFile.comment).toBe("Comment goes here");
-                expect(torrentFile.createdBy).toBe("Transmission/2.92 (14714)");
-                expect(torrentFile.creationDate).toBe(1460444420);
-                expect(torrentFile.encoding).toBe("UTF-8");
-                expect(torrentFile.info.length).toBe(59616);
-                expect(torrentFile.info.name).toBe("lorem.txt");
-                expect(torrentFile.info.pieceLength).toBe(32768);
-                expect(torrentFile.info.private).toBe(false);
-            })
+                // Inline expected value for each row
+                if (
+                    description === 'private present, set to 1' ||
+                    description === 'two private fields, picks first' ||
+                    description === 'realistic full input, private 1'
+                ) {
+                    expect(torrentFile.info.private).toBe(true);
+                } else {
+                    expect(torrentFile.info.private).toBe(false);
+                }
+            });
         })
     })
