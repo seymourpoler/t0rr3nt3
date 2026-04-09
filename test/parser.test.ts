@@ -219,4 +219,25 @@ describe('parser', function(){
             expect(torrentFile.info.private).toBe(false);
         });
     })
+
+    describe('when parse info.pieces', () => {
+        it('parses a single valid 20-byte value as a byte array', () => {
+            const pieceBytes = new Uint8Array([
+                1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+            ]);
+            const base = "d4:infod6:lengthi20e4:name8:testfile12:piece lengthi16384e6:pieces20:";
+            const content = base + String.fromCharCode(...pieceBytes) + "ee";
+
+            (fileReader.read as any).mockReturnValue(content);
+
+            const torrentFile = parser.parse();
+
+            expect(Array.isArray(torrentFile.info.pieces)).toBe(true);
+            expect(torrentFile.info.pieces.length).toBe(20);
+            // for (let i = 0; i < 20; ++i) {
+            //     expect(torrentFile.info.pieces[i]).toBe(pieceBytes[i]);
+            // }
+            expect(torrentFile.info.pieces).toBe(pieceBytes);
+        });
+    })
 })

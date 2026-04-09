@@ -176,14 +176,15 @@ export class Parser {
         const info = '4:info';
         const start = content.indexOf(info);
         if (start === -1) {
-            return new TorrentFileInformation({ length: 0, name: "", pieceLength: 0, private: false });
+            return new TorrentFileInformation({ length: 0, name: "", pieceLength: 0, private: false, pieces: new Uint8Array([]) });
         }
 
         return new TorrentFileInformation({
             length: this.getInfoLengthFrom(content),
             name: this.getInfoNameFrom(content),
             pieceLength: this.getInfoPieceLengthFrom(content),
-            private: this.getInfoPrivateFrom(content)
+            private: this.getInfoPrivateFrom(content),
+            pieces: this.getInfoPieces(content)
         });
     }
 
@@ -230,5 +231,9 @@ export class Parser {
             return false;
         }
         return match[1] === '1';
+    }
+
+    private getInfoPieces(content: string):Uint8Array {
+        throw new Error("Not implemented yet");
     }
 }
