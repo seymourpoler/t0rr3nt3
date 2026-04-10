@@ -222,7 +222,7 @@ describe('parser', function(){
 
     describe('when parse info.pieces', () => {
         it('returns info.pieces', () => {
-            (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes here10:created by25:Transmission/2.92 (14714)13:creation datei1460444420e8:encoding5:UTF-84:infod6:lengthi59616e4:name9:lorem.txt12:piece lengthi32768e6:pieces4:L@fR7:privatei1eee");
+            (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes here10:created by25:Transmission/2.92 (14714)13:creation datei1460444420e8:encoding5:UTF-84:infod6:lengthi59616e4:name9:lorem.txt12:piece lengthi32768e6:pieces20:AAAAAAAAAAAAAAAAAAAA7:privatei1eee");
 
             const torrentFile = parser.parse();
 
@@ -235,7 +235,7 @@ describe('parser', function(){
             expect(torrentFile.info.name).toBe("lorem.txt");
             expect(torrentFile.info.pieceLength).toBe(32768);
             expect(torrentFile.info.private).toBe(true);
-            expect(torrentFile.info.pieces).toEqual(new Uint8Array([76, 64, 114]));
+            expect(torrentFile.info.pieces).toEqual(new Uint8Array(Array(20).fill(65)));
         })
     })
 })
