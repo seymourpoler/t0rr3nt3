@@ -236,6 +236,57 @@ describe('parser', function(){
             expect(torrentFile.info.pieceLength).toBe(32768);
             expect(torrentFile.info.private).toBe(true);
             expect(torrentFile.info.pieces).toEqual(new Uint8Array(Array(20).fill(65)));
-        })
-    })
-})
+        });
+
+        it('handles multiple piece hashes (40 bytes, 2 hashes)', () => {
+            const value = '6:pieces40:AAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHH';
+            (fileReader.read as any).mockReturnValue(
+                `d8:announce33:http://1/announce4:info${value}e`
+            );
+            const torrentFile = parser.parse();
+            expect(torrentFile.info.pieces).toEqual(
+                new Uint8Array([
+                    ...Array(20).fill(65), // 'A'
+                    ...Array(20).fill(72)  // 'H'
+                ])
+            );
+        });
+
+        it('returns empty Uint8Array when value is less than 20 bytes', () => {
+            const value = '6:pieces10:ABCDEFGHIJ';
+            (fileReader.read as any).mockReturnValue(
+                `d8:announce33:http://1/announce4:info${value}e`
+            );
+            const torrentFile = parser.parse();
+            expect(torrentFile.info.pieces).toEqual(new Uint8Array([]));
+        });
+
+        it('returns empty Uint8Array when value is not multiple of 20', () => {
+            const value = '6:pieces22:ABCDEFGHIJKLMNOPQRSTUV'; // 22 bytes
+            (fileReader.read as any).mockReturnValue(
+                `d8:announce33:http://1/announce4:info${value}e`
+            );
+            const torrentFile = parser.parse();
+            expect(torrentFile.info.pieces).toEqual(new Uint8Array([]));
+        });
+
+        it('returns empty Uint8Array when pieces key is missing', () => {
+            (fileReader.read as any).mockReturnValue(
+                'd8:announce33:http://1/announce4:infoe'
+            );
+            const torrentFile = parser.parse();
+            expect(torrentFile.info.pieces).toEqual(new Uint8Array([]));
+        });
+
+        it('handles non-ASCII/high-byte data for pieces', () => {
+            // UTF-8 bytes > 127, e.g., 255, 129, etc.
+            const bytes = [255, 129, 180, 210, 254, 201, 188, 200, 190, 177, 166, 165, 142, 200, 144, 130, 128, 170, 200, 239];
+            const str = String.fromCharCode(...bytes);
+            (fileReader.read as any).mockReturnValue(
+                `d8:announce33:http://1/announce4:info6:pieces20:${str}e`
+            );
+            const torrentFile = parser.parse();
+            expect(torrentFile.info.pieces).toEqual(new Uint8Array(bytes));
+        });
+    });
+});
