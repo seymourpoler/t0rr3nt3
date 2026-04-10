@@ -188,9 +188,11 @@ export class Parser {
     }
 
     private getInfoLengthFrom(content: string): number {
-        // Looks for 6:lengthiXXXXe anywhere (in/following info), matches the test fixture! (Handles "6:lengthi59616e")
         const match = content.match(/6:lengthi(\d+)e/);
-        if (!match) return 0;
+        if (!match) {
+            return 0;
+        }
+
         return parseInt(match[1], 10);
     }
 
