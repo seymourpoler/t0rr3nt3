@@ -219,4 +219,23 @@ describe('parser', function(){
             expect(torrentFile.info.private).toBe(false);
         });
     })
+
+    describe('when parse info.pieces', () => {
+        it('returns info.pieces', () => {
+            (fileReader.read as any).mockReturnValue("d8:announce33:http://192.168.1.74:6969/announce7:comment17:Comment goes here10:created by25:Transmission/2.92 (14714)13:creation datei1460444420e8:encoding5:UTF-84:infod6:lengthi59616e4:name9:lorem.txt12:piece lengthi32768e6:pieces4:L@fR7:privatei1eee");
+
+            const torrentFile = parser.parse();
+
+            expect(torrentFile.announce).toBe("http://192.168.1.74:6969/announce");
+            expect(torrentFile.comment).toBe("Comment goes here");
+            expect(torrentFile.createdBy).toBe("Transmission/2.92 (14714)");
+            expect(torrentFile.creationDate).toBe(1460444420);
+            expect(torrentFile.encoding).toBe("UTF-8");
+            expect(torrentFile.info.length).toBe(59616);
+            expect(torrentFile.info.name).toBe("lorem.txt");
+            expect(torrentFile.info.pieceLength).toBe(32768);
+            expect(torrentFile.info.private).toBe(true);
+            expect(torrentFile.info.pieces).toEqual(new Uint8Array([76, 64, 114]));
+        })
+    })
 })

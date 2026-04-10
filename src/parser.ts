@@ -235,7 +235,32 @@ export class Parser {
         return match[1] === '1';
     }
 
-    private getInfoPiecesFrom(content: string): Uint8Array{
-        throw new Error("Not implemented yet");
+    private getInfoPiecesFrom(content: string): Uint8Array {
+        const key = '6:pieces';
+        const infoStart = content.indexOf('4:info');
+        if (infoStart === -1) return new Uint8Array([]);
+        // Start searching within info dict only
+        const piecesIndex = content.indexOf(key, infoStart);
+        if (piecesIndex === -1) return new Uint8Array([]);
+
+        let lenStart = piecesIndex + key.length;
+        let lenEnd = lenStart;
+        while (content[lenEnd] && /[0-9]/.test(content[lenEnd])) {
+            lenEnd++;
+        }
+        if (lenStart === lenEnd || content[lenEnd] !== ':') return new Uint8Array([]);
+        const length = parseInt(content.slice(lenStart, lenEnd), 10);
+        if (isNaN(length) || length < 20 || length % 20 !== 0) return new Uint8Array([]);
+        const valueStart = lenEnd + 1;
+        if (valueStart + length > content.length) return new Uint8Array([]);
+
+        // The string might not represent raw bytes, so we need to get the raw char codes.
+        const raw = content.substr(valueStart, length);
+        const bytes = new Uint8Array(length);
+        for (let i = 0; i < length; i++) {
+            // Keep in mind that charCodeAt only handles 0-255 for Latin1, which matches the usage here
+            bytes[i] = raw.charCodeAt(i) & 0xFF;
+        }
+        return bytes;
     }
 }
